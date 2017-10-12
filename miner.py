@@ -13,6 +13,7 @@ app = gui("Twitter Miner", "1200x1000")
 app.addLabelEntry("Query")
 app.setLabelFont(16, "Arial")
 
+import sys
 import twitter
 import json
 from sklearn.feature_extraction.text import CountVectorizer
@@ -25,7 +26,7 @@ from pytagcloud.lang.counter import get_tag_counts
 class Miner:
 
     def __init__(self):
-        with open("config.json") as config_file:
+        with open(sys.argv[1]) as config_file:
             self.config = json.load(config_file)
         self.api = twitter.Api(consumer_key=self.config["consumer_key"], consumer_secret=self.config["consumer_secret"],
                       access_token_key=self.config["access_key"], access_token_secret=self.config["access_secret"],
@@ -58,7 +59,7 @@ class Miner:
         stop_words = ["https", "http"]
         for word in freq:
             if freq[word] > 0 and len(word) < 8 and word not in stop_words:
-                txt_str += (" %s " % word) * freq[word]
+                txt_str += ("%s " % word) * freq[word]
         tags = make_tags(get_tag_counts(txt_str), minsize=1, maxsize=120)
         #print tags
         create_tag_image(tags, fname, size=(1200, 800), fontname='Inconsolata', layout=LAYOUT_MIX)
